@@ -21,7 +21,6 @@ public class CalculatorRequestInterceptor implements HandlerInterceptor {
     private int capacity = 2;
     private long tokens = 10;
 
-    @Autowired
     RateLimiter maxLimiter = new RateLimiter(capacity,tokens);
 
 
