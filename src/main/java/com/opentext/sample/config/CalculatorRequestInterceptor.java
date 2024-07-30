@@ -4,46 +4,35 @@ import com.opentext.sample.model.Result;
 import com.opentext.sample.ratelimitter.RateLimiter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import org.springframework.web.servlet.ModelAndView;
 
 
 @Component
 public class CalculatorRequestInterceptor implements HandlerInterceptor {
 
-//    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
-    private final long tokensToConsumeByDefault = 1;
-    private int capacity = 2;
-    private long tokens = 10;
 
-    RateLimiter maxLimiter = new RateLimiter(capacity,tokens);
-
-
+    private final int capacity = 3;
+    private final long tokens = 10000;
+    // private final long tokens = 10;
+    RateLimiter rateLimiter = new RateLimiter(capacity, tokens);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         System.out.println("Pre-handling request: " + request.getRequestURI());
 
         String clientIP = getClientIP(request);
-        System.out.println("Client IP "+clientIP);
+        System.out.println("Client IP " + clientIP);
 
-
-        if(maxLimiter.isAllowed(clientIP)) {
-            System.out.println("Is allowed fro ip "+clientIP);
+        if (rateLimiter.isAllowed(clientIP)) {
+            System.out.println("Is allowed from ip " + clientIP);
+            System.out.println("Returning to controller");
             return true;
         }
-        System.out.println("Is not allowed fro ip "+clientIP);
+        System.out.println("Is not allowed from ip " + clientIP);
 
-
-        Result result  = new Result("a","b", "oper","0.0","max requested");
-
-
-
+        Result result = new Result("a", "b", "oper", "0.0", "max requested");
         // Add custom headers, authentication checks, etc.
         return false; // Continue processing the request
     }

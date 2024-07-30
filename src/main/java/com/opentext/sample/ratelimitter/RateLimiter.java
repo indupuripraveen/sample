@@ -1,19 +1,15 @@
 package com.opentext.sample.ratelimitter;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class RateLimiter {
 
-    private int maxRequests;
-    private long windowSizeInMillis;
-
-    private Map<String, RequestCounter> clientCounters;
+    private final int maxRequests;
+    private final long windowSizeInMillis;
+    private final Map<String, RequestCounter> clientCounters;
 
     public RateLimiter(int maxRequests, long windowSizeInMillis) {
         this.maxRequests = maxRequests;
@@ -22,34 +18,26 @@ public class RateLimiter {
     }
 
     public boolean isAllowed(String clientId) {
-
         long currentTime = System.currentTimeMillis();
         RequestCounter counter = clientCounters.get(clientId);
-
-        System.out.println("counter is "+counter);
-
-        System.out.println("Current TIme "+currentTime);
+        //System.out.println("counter is " + counter);
+        //System.out.println("Current TIme " + currentTime);
         if (counter == null || currentTime - counter.getWindowStart() > windowSizeInMillis) {
             // New window or window expired
             counter = new RequestCounter(currentTime, 1);
             clientCounters.put(clientId, counter);
-           System.out.println("Counter icremented "+counter.getCount());
+            System.out.println("Counter incremented to " + counter.getCount());
             return true;
         } else if (counter.getCount() < maxRequests) {
 
-            System.out.println("Tme  "+(currentTime - counter.getWindowStart()));
-            System.out.println("windowSizeInMillis "+windowSizeInMillis);
-            System.out.println("max Request "+maxRequests);
-
-
-            System.out.println("Counter less than maxRequests  "+counter.getCount());
-            System.out.println("counter.getWindowStart() "+counter.getWindowStart());
-
+            //  System.out.println("Tme  " + (currentTime - counter.getWindowStart()));
+            //  System.out.println("windowSizeInMillis " + windowSizeInMillis);
+            System.out.println("Hit the max Request " + maxRequests);
             // Request allowed within current window
             counter.incrementCount();
             return true;
         } else {
-            System.out.println("Counter more than maxRequests  "+counter.getCount());
+            System.out.println("Counter more than maxRequests  " + counter.getCount());
             // Request limit exceeded
 
             return false;
@@ -58,7 +46,7 @@ public class RateLimiter {
 
     private static class RequestCounter {
 
-        private long windowStart;
+        private final long windowStart;
         private int count;
 
         public RequestCounter(long windowStart, int count) {
@@ -76,7 +64,7 @@ public class RateLimiter {
 
         public void incrementCount() {
             count++;
-            System.out.println("increment Counter to"+count);
+            System.out.println("Increment Counter to " + count);
         }
     }
 }

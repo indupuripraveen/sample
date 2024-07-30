@@ -15,7 +15,6 @@ public class Calculator {
         this.operator = operator;
     }
 
-
     public double getLeftOperand() {
         return leftOperand;
     }
@@ -41,35 +40,33 @@ public class Calculator {
     }
 
     public Result calculateResult() {
-        //double result = 0;
-        Result result  = new Result(""+leftOperand,""+rightOperand, this.operator,"0.0","");
 
-        switch(this.operator) {
+        Result result = new Result("" + leftOperand, "" + rightOperand, this.operator, "0.0", "");
+
+        switch (this.operator) {
             case "a":
-                result.setResult(""+(this.leftOperand + this.rightOperand));
+                result.setResult("" + (this.leftOperand + this.rightOperand));
                 break;
             case "s":
-                result.setResult(""+(this.leftOperand - this.rightOperand));
+                result.setResult("" + (this.leftOperand - this.rightOperand));
                 break;
             case "m":
-                result.setResult(""+(this.leftOperand * this.rightOperand));
+                result.setResult("" + (this.leftOperand * this.rightOperand));
                 break;
             case "d":
                 try {
                     double res = this.leftOperand / this.rightOperand;
                     result.setResult(String.valueOf(res));
-                }catch (ArithmeticException  e )
-                {
+                } catch (ArithmeticException e) {
                     result.setError("/ by zero");
+                    System.out.println("/ by zero");
                 }
-                System.out.println(leftOperand +"/"+rightOperand);
+                System.out.println(leftOperand + "/" + rightOperand);
                 break;
             default:
-                System.out.println("Ohter operator");
+                System.out.println("Other operator");
                 result.setError("Invalid operator");
         }
-
-
         return result;
     }
 }
